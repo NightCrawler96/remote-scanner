@@ -3,6 +3,11 @@ Run debug server:
 flask --app flaskr run --debug
 ```
 
+Initialize database:
+```bash
+flask --app flaskr init-db
+```
+
 Install app package:
 ```bash
 pip install -e .
