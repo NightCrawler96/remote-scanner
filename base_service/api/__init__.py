@@ -39,7 +39,8 @@ def create_app(test_config=None):
 
     from . import service_registration
 
-    api.add_resource(service_registration.ServiceRegistration, "/service/<id>")
+    api.add_resource(service_registration.ServiceRegistrationPost, "/service")
+    api.add_resource(service_registration.ServiceRegistration, "/service/<int:id>")
 
     from .db_connection_pool import initiate_connection_pool, create_database, db
     initiate_connection_pool(app)
