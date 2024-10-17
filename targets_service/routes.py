@@ -1,6 +1,8 @@
+import logging
 from flask import Blueprint, request, jsonify
 from models import db, Target
 
+logging.basicConfig(level=logging.ERROR)
 targets_bp = Blueprint('targets', __name__)
 
 @targets_bp.route('/targets', methods=['POST'])
@@ -43,7 +45,8 @@ def create_target():
         db.session.commit()
         return jsonify(new_target.to_dict()), 201
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        logging.error("Error creating target: %s", e, exc_info=True)
+        return jsonify({'error': 'An internal error has occurred.'}), 400
 
 @targets_bp.route('/targets', methods=['GET'])
 def get_targets():
@@ -107,7 +110,8 @@ def update_target(id):
         db.session.commit()
         return jsonify(target.to_dict()), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        logging.error("Error updating target: %s", e, exc_info=True)
+        return jsonify({'error': 'An internal error has occurred.'}), 400
 
 @targets_bp.route('/targets/<int:id>', methods=['DELETE'])
 def delete_target(id):
