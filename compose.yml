@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - targets_service
+      - services_service
+      - vulns_service
+      - angular_app
+
+  targets_service:
+    build:
+      context: ./targets_service
+    container_name: targets_service
+    volumes:
+      - targets_db:/app/targets.db
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+    expose:
+      - "5000"
+
+  services_service:
+    build:
+      context: ./services_service
+    container_name: services_service
+    volumes:
+      - services_db:/app/services.db
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+    expose:
+      - "5000"
+    depends_on:
+      - targets_service
+
+  vulns_service:
+    build:
+      context: ./vulns_service
+    container_name: vulns_service
+    volumes:
+      - vulns_db:/app/vulns.db
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+    expose:
+      - "5000"
+    depends_on:
+      - services_service
+
+  angular_app:
+    build:
+      context: ./vuln-management-ui
+      dockerfile: Dockerfile
+    container_name: angular_app
+    expose:
+      - "80"
+    depends_on:
+      - targets_service
+      - services_service
+      - vulns_service
+
+volumes:
+  targets_db:
+  services_db:
+  vulns_db:
