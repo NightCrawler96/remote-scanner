@@ -1,0 +1,16 @@
+<div>
+    <h2>Targets</h2>
+    <form (ngSubmit)="addTarget()">
+      <input [(ngModel)]="newTarget.name" placeholder="Target Name" name="name" required>
+      <input [(ngModel)]="newTarget.ip" placeholder="Target IP" name="ip" required>
+      <button type="submit">Add Target</button>
+    </form>
+  
+    <ul>
+      <li *ngFor="let target of targets">
+        {{ target.name }} ({{ target.ip }})
+        <button (click)="deleteTarget(target.id)">Delete</button>
+      </li>
+    </ul>
+  </div>
+  
