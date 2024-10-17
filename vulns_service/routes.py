@@ -1,5 +1,7 @@
+import logging
 from flask import Blueprint, request, jsonify
 from models import db, Vulnerability
+
 
 vulns_bp = Blueprint('vulnerabilities', __name__)
 
@@ -49,7 +51,8 @@ def create_vulnerability():
         db.session.commit()
         return jsonify(new_vuln.to_dict()), 201
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        logging.error("Error creating vulnerability: %s", e, exc_info=True)
+        return jsonify({'error': 'An internal error has occurred!'}), 400
 
 @vulns_bp.route('/vulnerabilities', methods=['GET'])
 def get_vulnerabilities():
@@ -113,7 +116,8 @@ def update_vulnerability(id):
         db.session.commit()
         return jsonify(vuln.to_dict()), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        logging.error("Error updating vulnerability: %s", e, exc_info=True)
+        return jsonify({'error': 'An internal error has occurred!'}), 400
 
 @vulns_bp.route('/vulnerabilities/<int:id>', methods=['DELETE'])
 def delete_vulnerability(id):
