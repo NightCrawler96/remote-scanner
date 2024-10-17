@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models import db, Service
-
+import logging
 services_bp = Blueprint('services', __name__)
 
 @services_bp.route('/services', methods=['POST'])
@@ -49,7 +49,8 @@ def create_service():
         db.session.commit()
         return jsonify(new_service.to_dict()), 201
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        logging.error("Error creating service: %s", e)
+        return jsonify({'error': 'An internal error has occurred!'}), 400
 
 @services_bp.route('/services', methods=['GET'])
 def get_services():
@@ -113,7 +114,8 @@ def update_service(id):
         db.session.commit()
         return jsonify(service.to_dict()), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        logging.error("Error updating service: %s", e)
+        return jsonify({'error': 'An internal error has occurred!'}), 400
 
 @services_bp.route('/services/<int:id>', methods=['DELETE'])
 def delete_service(id):
